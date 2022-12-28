@@ -15,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.transaction.Transactional;
+import java.util.Optional;
 
 @ExtendWith(SpringExtension.class)
 @Transactional
@@ -49,16 +50,16 @@ public class BannerRepositoryTest {
     @DisplayName("Get banner details based on Banner Id")
     @Test
     void getBannerById() {
-        Banner banner = bannerRepository.findById(1).orElseThrow(() -> new IllegalArgumentException(ErrorCodes.BANNER_NOT_FOUND));
-        Assertions.assertThat(banner.getId()).isEqualTo(1);
+        Optional<Banner> banner = bannerRepository.findById(1);
+        Assertions.assertThat(banner.get().getId()).isEqualTo(1);
     }
 
     @DisplayName("Update banner details based on Banner Id")
     @Test
     void updateBannerById() {
-        Banner bannerInfo = bannerRepository.findById(1).orElseThrow(() -> new IllegalArgumentException(ErrorCodes.BANNER_NOT_FOUND));
-        bannerInfo.setButtonName("Discover");
-        Assertions.assertThat(bannerInfo.getId()).isEqualTo(bannerInfo.getId());
+        Optional<Banner> bannerInfo = bannerRepository.findById(1);
+        bannerInfo.get().setButtonName("Discover");
+        Assertions.assertThat(bannerInfo.get().getId()).isEqualTo(bannerInfo.get().getId());
     }
 
     @DisplayName("Delete banner details based on Id")
