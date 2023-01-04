@@ -23,4 +23,6 @@ public interface BannerService {
     String updateBannerDetails(BannerDto bannerDto);
 
     String updateImageByBannerId(int bannerId, MultipartFile file) throws IOException;
+
+    byte[] getImage(int bannerId);
 }

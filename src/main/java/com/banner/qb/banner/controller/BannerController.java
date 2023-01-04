@@ -50,4 +50,8 @@ public class BannerController {
     public String imageUpdateByBannerId(@RequestParam int bannerId,@RequestParam MultipartFile file) throws IOException {
         return bannerService.updateImageByBannerId(bannerId,file);
     }
+    @GetMapping("/getImageByBannerId/{bannerId}")
+    public byte[] get(@PathVariable("bannerId") int bannerId){
+        return bannerService.getImage(bannerId);
+    }
 }

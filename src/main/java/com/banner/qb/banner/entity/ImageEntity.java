@@ -1,14 +1,15 @@
 package com.banner.qb.banner.entity;
 
 import com.banner.qb.commonentity.CommonEntity;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.*;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 
-@Data
+@Getter
+@Setter
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
@@ -19,7 +20,9 @@ public class ImageEntity extends CommonEntity {
     @Lob
     private byte[] data;
 
+//    @JsonBackReference
+    @JsonIgnore
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "banner_id", nullable = false, unique = true,referencedColumnName = "id")
+    @JoinColumn(name = "banner_id",referencedColumnName = "id")
     private Banner banner;
 }

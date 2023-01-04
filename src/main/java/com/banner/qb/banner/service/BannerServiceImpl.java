@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
@@ -90,5 +91,15 @@ public class BannerServiceImpl implements BannerService {
             imageRepository.save(imageEntity);
         }
         return "Image Updated Successfully...";
+    }
+
+    @Override
+    public byte[] getImage(int bannerId) {
+        Optional<Banner> banner = bannerRepository.findById(bannerId);
+        ImageEntity image = banner.get().getImage();
+        if(banner.isPresent()){
+            return Base64.getEncoder().encode(image.getData());
+        }
+        return new byte[0];
     }
 }

@@ -2,12 +2,14 @@ package com.banner.qb.banner.entity;
 
 import com.banner.qb.commonentity.CommonEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 
-@Data
+@Getter
+@Setter
 @Table(name="banner")
 @Where(clause = "deleted_At is null")
 @Entity
@@ -20,7 +22,8 @@ public class Banner extends CommonEntity {
     private String url;
     private String buttonName;
 
-    @JsonIgnore
+//    @JsonIgnore
+//    @JsonManagedReference
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "banner")
     private ImageEntity image;
 }
