@@ -15,7 +15,6 @@ import javax.persistence.*;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-//@EqualsAndHashCode(callSuper=false)
 @Builder
 public class Banner extends CommonEntity {
     private String description;
@@ -24,6 +23,7 @@ public class Banner extends CommonEntity {
 
 //    @JsonIgnore
 //    @JsonManagedReference
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "banner")
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+    @JoinColumn(name = "images_id",referencedColumnName = "id")
     private ImageEntity image;
 }

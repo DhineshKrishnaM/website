@@ -20,9 +20,4 @@ public class ImageEntity extends CommonEntity {
     @Lob
     private byte[] data;
 
-//    @JsonBackReference
-    @JsonIgnore
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "banner_id",referencedColumnName = "id")
-    private Banner banner;
 }

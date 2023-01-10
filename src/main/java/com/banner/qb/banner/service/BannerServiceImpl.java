@@ -5,6 +5,7 @@ import com.banner.qb.banner.entity.Banner;
 import com.banner.qb.banner.entity.ImageEntity;
 import com.banner.qb.banner.repository.BannerRepository;
 import com.banner.qb.banner.repository.ImageRepository;
+import com.banner.qb.exceptions.BannerException;
 import com.banner.qb.utility.ErrorCodes;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -15,12 +16,14 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Base64;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 @Slf4j
 public class BannerServiceImpl implements BannerService {
+
     @Autowired
     private BannerRepository bannerRepository;
     @Autowired
@@ -39,6 +42,8 @@ public class BannerServiceImpl implements BannerService {
     public BannerDto createBanner(BannerDto bannerDto) {
         log.info("Create a banner processing...");
         Banner banner = modelMapper.map(bannerDto, Banner.class);
+        Date date=new Date();
+        banner.setCreatedAt(date);
         Banner banner1 = bannerRepository.save(banner);
         return modelMapper.map(banner1, BannerDto.class);
     }
@@ -53,31 +58,29 @@ public class BannerServiceImpl implements BannerService {
     }
 
     @Override
-    public Banner getBannerById(int id) {
-        log.info("Banner detail is processing...");
-        return bannerRepository.findById(id).orElseThrow(() -> new IllegalArgumentException(ErrorCodes.BANNER_NOT_FOUND));
-    }
-
-    @Override
     public String uploadImage(int id, MultipartFile file) throws IOException {
         log.info("Image uploading...");
         Banner banner = bannerRepository.findById(id).orElseThrow(() -> new IllegalArgumentException(ErrorCodes.BANNER_NOT_FOUND));
         ImageEntity imageEntity = new ImageEntity();
         imageEntity.setData(file.getBytes());
         imageEntity.setFileName(file.getOriginalFilename());
-        imageEntity.setBanner(banner);
-        imageRepository.save(imageEntity);
+        ImageEntity image = imageRepository.save(imageEntity);
+        banner.setImage(image);
+        bannerRepository.save(banner);
         return "Image Uploaded Successfully";
     }
 
     @Override
-    public String updateBannerDetails(BannerDto bannerDto) {
-        Banner banner = modelMapper.map(bannerDto, Banner.class);
-        banner.setDescription(bannerDto.getDescription());
-        banner.setButtonName(bannerDto.getButtonName());
-        banner.setUrl(bannerDto.getUrl());
-        bannerRepository.save(banner);
-        return "Updated banner details";
+    public String updateBannerDetails(int bannerId,BannerDto bannerDto) {
+        Optional<Banner> banner1 = bannerRepository.findById(bannerId);
+        if(banner1.isPresent()){
+            banner1.get().setButtonName(bannerDto.getButtonName());
+            banner1.get().setDescription(bannerDto.getDescription());
+            banner1.get().setUrl(bannerDto.getUrl());
+            bannerRepository.save(banner1.get());
+            return "Updated banner details";
+        }
+        return "Not Updated banner details";
     }
 
     @Override
@@ -87,19 +90,32 @@ public class BannerServiceImpl implements BannerService {
             ImageEntity imageEntity = bannerInfo.get().getImage();
             imageEntity.setData(file.getBytes());
             imageEntity.setFileName(file.getOriginalFilename());
-            bannerInfo.get().setImage(imageEntity);
-            imageRepository.save(imageEntity);
+            ImageEntity image = imageRepository.save(imageEntity);
+            bannerInfo.get().setImage(image);
+            bannerRepository.save(bannerInfo.get());
+            return "Image uploaded successfully";
         }
-        return "Image Updated Successfully...";
+        return "Image Not Updated...";
     }
 
     @Override
-    public byte[] getImage(int bannerId) {
-        Optional<Banner> banner = bannerRepository.findById(bannerId);
-        ImageEntity image = banner.get().getImage();
-        if(banner.isPresent()){
-            return Base64.getEncoder().encode(image.getData());
+    public String deleteImage(int bannerId) {
+        Optional<Banner> bannerInfo = bannerRepository.findById(bannerId);
+        if(bannerInfo.isPresent()){
+            ImageEntity image = bannerInfo.get().getImage();
+            image.setDeletedAt(LocalDate.now());
+            imageRepository.save(image);
+            bannerInfo.get().setImage(null);
+            bannerRepository.save(bannerInfo.get());
+            return "Image deleted successfully";
         }
-        return new byte[0];
+        return "Image is not deleted..";
     }
+
+    @Override
+    public Banner getBannerById(int bannerId) throws BannerException {
+        Banner bannerInfo = bannerRepository.findById(bannerId).orElseThrow(() -> new BannerException("BANNER NOT AVAILABLE"));
+        return bannerInfo;
+    }
+
 }

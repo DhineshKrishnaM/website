@@ -5,6 +5,7 @@ import com.banner.qb.banner.entity.Banner;
 import com.banner.qb.banner.repository.BannerRepository;
 import com.banner.qb.banner.service.BannerServiceImpl;
 import com.banner.qb.commonentity.CommonEntity;
+import com.banner.qb.exceptions.BannerException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -70,7 +71,7 @@ class BannerServiceTest {
     }
 
     @Test
-    void getBannerById() {
+    void getBannerById() throws BannerException {
         Mockito.when(bannerRepository.findById(1)).thenReturn(Optional.of(banner));
         Assertions.assertThat(bannerService.getBannerById(1)).isEqualTo(banner);
     }

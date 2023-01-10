@@ -1,9 +1,9 @@
 package com.banner.qb.blog.service;
 
+import com.banner.qb.banner.entity.ImageEntity;
+import com.banner.qb.banner.repository.ImageRepository;
 import com.banner.qb.blog.dto.BlogDto;
 import com.banner.qb.blog.entity.BlogEntity;
-import com.banner.qb.blog.entity.BlogImage;
-import com.banner.qb.blog.repo.BlogImageRepo;
 import com.banner.qb.blog.repo.BlogRepo;
 import com.banner.qb.exceptions.BlogException;
 import org.modelmapper.ModelMapper;
@@ -21,7 +21,7 @@ public class BlogServiceImpl implements BlogService{
     @Autowired
     private BlogRepo blogRepository;
     @Autowired
-    private BlogImageRepo blogImageRepo;
+    private ImageRepository imageRepo;
     @Autowired
     ModelMapper modelMapper;
 
@@ -57,13 +57,22 @@ public class BlogServiceImpl implements BlogService{
     public String imageUpload(int blogId,MultipartFile file) {
         try{
             Optional<BlogEntity> blog = blogRepository.findById(blogId);
-            if(blog.isPresent()){
-                BlogImage blogImage=new BlogImage();
+            if(blog.get().getBlogImage()==null){
+                ImageEntity blogImage=new ImageEntity();
                 blogImage.setData(file.getBytes());
                 blogImage.setFileName(file.getOriginalFilename());
-                blogImage.setBlog(blog.get());
-                BlogImage bloImageDetails = blogImageRepo.save(blogImage);
+                ImageEntity bloImageDetails = imageRepo.save(blogImage);
                 blog.get().setBlogImage(bloImageDetails);
+                blogRepository.save(blog.get());
+                return "Image uploaded successfully...";
+            }
+            if(blog.get().getBlogImage()!=null){
+                ImageEntity blogImage1 = blog.get().getBlogImage();
+                blogImage1.setData(file.getBytes());
+                blogImage1.setFileName(file.getOriginalFilename());
+                ImageEntity bloImageDetails = imageRepo.save(blogImage1);
+                blog.get().setBlogImage(bloImageDetails);
+                blogRepository.save(blog.get());
                 return "Image Uploaded Successfully";
             }
         } catch (IOException e) {
@@ -76,20 +85,6 @@ public class BlogServiceImpl implements BlogService{
     public List<BlogEntity> listOfBlog() {
         List<BlogEntity> blog = blogRepository.findAll();
         return blog;
-    }
-
-    @Override
-    public String updateBlogImage(int blogId, MultipartFile file) throws IOException {
-        Optional<BlogEntity> blog = blogRepository.findById(blogId);
-        if(blog.isPresent()){
-            BlogImage image = blog.get().getBlogImage();
-            image.setFileName(file.getOriginalFilename());
-            image.setData(file.getBytes());
-            image.setBlog(blog.get());
-            BlogImage blogImageDetails = blogImageRepo.save(image);
-            return "Blog Image Updated successfully"  ;
-        }
-        return "Blog Image Not updated";
     }
 
 }

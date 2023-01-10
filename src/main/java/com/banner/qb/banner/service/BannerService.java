@@ -2,6 +2,7 @@ package com.banner.qb.banner.service;
 
 import com.banner.qb.banner.entity.Banner;
 import com.banner.qb.banner.dto.BannerDto;
+import com.banner.qb.exceptions.BannerException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,13 +17,13 @@ public interface BannerService {
 
     String deleteExistingBanner(int id);
 
-    Banner getBannerById(int id);
-
     String uploadImage(int id, MultipartFile file) throws IOException;
 
-    String updateBannerDetails(BannerDto bannerDto);
+    String updateBannerDetails(int bannerId,BannerDto bannerDto);
 
     String updateImageByBannerId(int bannerId, MultipartFile file) throws IOException;
 
-    byte[] getImage(int bannerId);
+    String deleteImage(int bannerId);
+
+    Banner getBannerById(int bannerId) throws BannerException;
 }

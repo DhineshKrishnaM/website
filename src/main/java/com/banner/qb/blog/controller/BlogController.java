@@ -65,13 +65,4 @@ public class BlogController {
         return new ResponseEntity<>(blogService.listOfBlog(), HttpStatus.OK);
     }
 
-    /**
-     * To update the blog image and returns "Updated successfully"
-     * @param blogId,file
-     * @throws IOException
-     */
-    @PutMapping("/{blogId}/updateBlogImage")
-    public String updateBlogImage(@PathVariable("blogId") int blogId,@RequestParam MultipartFile file) throws IOException {
-        return blogService.updateBlogImage(blogId,file);
-    }
 }

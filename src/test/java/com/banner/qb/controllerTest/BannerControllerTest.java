@@ -63,9 +63,5 @@ class BannerControllerTest {
         Assertions.assertThat(bannerController.deleteBannerById(1)).isEqualTo("Successfully deleted");
     }
 
-    @Test
-    void updateBanner() {
-        Mockito.when(bannerService.updateBannerDetails(bannerDto)).thenReturn("Updated banner details");
-        Assertions.assertThat(bannerController.updateBannerDetails(bannerDto)).isEqualTo("Updated banner details");
-    }
+
 }

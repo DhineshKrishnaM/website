@@ -23,5 +23,4 @@ public interface BlogService {
 
     List<BlogEntity> listOfBlog();
 
-    String updateBlogImage(int blogId, MultipartFile file) throws IOException;
 }

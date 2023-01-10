@@ -3,8 +3,10 @@ package com.banner.qb.banner.controller;
 import com.banner.qb.banner.entity.Banner;
 import com.banner.qb.banner.dto.BannerDto;
 import com.banner.qb.banner.service.BannerService;
+import com.banner.qb.exceptions.BannerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,25 +35,24 @@ public class BannerController {
         return bannerService.deleteExistingBanner(id);
     }
 
-    @GetMapping("/getBannerById")
-    public Banner getBanner(@RequestParam int id) {
-        return bannerService.getBannerById(id);
-    }
-
-    @PostMapping("/uploadImageForId")
+    @PostMapping(value = "/uploadImageForId",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public String uploadImage(@RequestParam int id, @RequestParam MultipartFile file) throws IOException {
         return bannerService.uploadImage(id, file);
     }
     @PutMapping("/updateBannerDetails")
-    public String updateBannerDetails(@RequestBody BannerDto bannerDto){
-        return bannerService.updateBannerDetails(bannerDto);
+    public String updateBannerDetails(int bannerId, @RequestBody BannerDto bannerDto){
+        return bannerService.updateBannerDetails(bannerId,bannerDto);
     }
-    @PutMapping("/updateImageByBannerId")
+    @PutMapping(value = "/updateImageByBannerId",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public String imageUpdateByBannerId(@RequestParam int bannerId,@RequestParam MultipartFile file) throws IOException {
         return bannerService.updateImageByBannerId(bannerId,file);
     }
-    @GetMapping("/getImageByBannerId/{bannerId}")
-    public byte[] get(@PathVariable("bannerId") int bannerId){
-        return bannerService.getImage(bannerId);
+    @DeleteMapping("/deleteImage")
+    public String deleteImageByBannerId(@RequestParam int bannerId){
+        return bannerService.deleteImage(bannerId);
+    }
+    @GetMapping("/getBannerById")
+    public Banner getBanner(@RequestParam int bannerId) throws BannerException {
+        return bannerService.getBannerById(bannerId);
     }
 }

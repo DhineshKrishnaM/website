@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class BannerDto extends CommonEntity{
+public class BannerDto {
     private String description;
     private String url;
     private String buttonName;
